@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Signin from "./Pages/Signin";
+import Signin from "./Pages/Login";
 import Dashboard from "./Pages/Dashboard";
 import Account from "./Pages/Account";
 
@@ -8,7 +8,7 @@ function App() {
     <>
 
       <Routes>
-        <Route path="/signin" element={<Signin/>}/>
+        <Route path="/login" element={<Signin/>}/>
         <Route path="/account" element={<Account/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
       </Routes>
