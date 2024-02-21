@@ -1,0 +1,129 @@
+{% extends 'weightly/base.html' %}
+
+{% block title %}Dashboard - Weightly{% endblock %}
+
+{% block content %}
+<div class="container p-5 d-flex flex-column align-items-center justify-content-center min-vh-100">
+
+    <h1 class="display-4">
+        {% if user.is_authenticated %}
+            {{ user.first_name }} {{ user.last_name }}
+        {% else %}
+            Guest
+        {% endif %}
+    </h1>
+
+    <div class="container mt-4">
+        <div class="row mb-4 ">
+            <div class="col-md-4 p-2">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Current Weight (kg)</h5>
+                        <p class="card-text lead">
+                            {% if latest_weight %}
+                                {{ latest_weight.weight }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 p-2">
+                <div class="card shadow-sm bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Suggested Calories (kcal)</h5>
+                        <p class="card-text lead">
+                            {% if suggested_calories is not None %}
+                                {{ suggested_calories }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 p-2">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Body Mass Index</h5>
+                        <p class="card-text lead">
+                            {% if latest_weight %}
+                                {{ latest_weight.bmi }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    
+        <div class="row mb-4">
+            <div class="col-md-12 p-2">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Weight Chart (kg)</h5>
+                        <canvas id="myChart" class="img-fluid" width="400" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12 p-2">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Weight History</h5>
+                        <p class="card-text lead">(from newest to oldest)</p>
+                        <ul class="list-group">
+                            {% for entry in weight_entries reversed %}
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        {{ entry.date }} - {{ entry.weight }} kg
+                                        <form method="post" action="{% url 'delete_weight_entry' entry.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-link text-muted btn-sm" onclick="return confirm('Are you sure you want to delete this entry?')">Delete</button>
+                                        </form>
+                                    </div>   
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+
+    const data = {
+        labels: [{% for entry in weight_entries %}'{{ entry.date }}',{% endfor %}],
+        datasets: [{
+            label: 'Weight',
+            borderColor: 'rgb(92, 184, 92)',
+            data: [{% for entry in weight_entries %}{{ entry.weight }},{% endfor %}]
+        }]
+    };
+
+    const options = {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    };
+
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: options
+    });
+</script>
+
+{% endblock %}

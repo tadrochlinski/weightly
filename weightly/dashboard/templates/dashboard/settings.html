@@ -1,0 +1,16 @@
+{% extends 'weightly/base.html' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+    <div class="py-5 d-flex align-items-center flex-column justify-content-center min-vh-100">
+        <h1 class="display-4">Settings</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <p>If you want to change your password click <a href="#">here</a></p>
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+
+{% endblock %}
