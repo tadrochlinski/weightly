@@ -6,6 +6,7 @@ Weightly is an application that allows users to effortlessly archive and facilit
 ### Tech stack
 - Django
 - Chart.js
+- Bootstrap 5
 
 ### Installation
 ```powershell
